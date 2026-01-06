@@ -3,7 +3,7 @@ import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ManagedPolicy, OpenIdConnectPrincipal, OpenIdConnectProvider, Role } from 'aws-cdk-lib/aws-iam';
 import { BlockPublicAccess, Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib/core';
+import { CfnOutput, Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 import { join } from 'path';
 
@@ -31,7 +31,7 @@ export class WebsiteDeployStack extends Stack {
     const iamRepoDeployAccess = repositoryConfig.map(
       (r) => `repo:${r.owner}/${r.repo}:${r.filter ?? '*'}`
     );
-    new Role(this, "GithubDeployRole", {
+    const role=new Role(this, "GithubDeployRole", {
       roleName: 'GitHubDeployRole',
       assumedBy: new OpenIdConnectPrincipal(
         githubOidcProvider,
@@ -49,6 +49,9 @@ export class WebsiteDeployStack extends Stack {
       ],
       maxSessionDuration: Duration.hours(1),
     });
+    new CfnOutput(this, "role", {
+      value: role.roleName
+    })
     // github deploy
 
     const bucket = new Bucket(this, "WebsiteBucket", {
