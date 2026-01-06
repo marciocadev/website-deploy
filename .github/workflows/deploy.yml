@@ -3,7 +3,7 @@ name: Deploy on AWS
 on:
   push:
     branches:
-      -main
+      - main
     types:
       - closed
   # workflow_dispatch: {}
