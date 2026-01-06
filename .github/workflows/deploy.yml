@@ -15,17 +15,14 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
-          role-to-assume: arn:aws:iam::549672552044:role/WebsiteDeployStack-GithubDeployRoleB0CF66A5-Pd1g9lcaGNDZ
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
           aws-region: us-east-1
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
