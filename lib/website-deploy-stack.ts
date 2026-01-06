@@ -24,12 +24,11 @@ export class WebsiteDeployStack extends Stack {
       {
         owner: "marciocadev",
         repo: "marciocadev-deploy",
-        filter: "pull_request"
       },
       {
         owner: "marciocadev",
         repo: "marciocadev-deploy",
-        filter: "main"
+        filter: "ref:refs/heads/main"
       },
     ]
     const iamRepoDeployAccess = repositoryConfig.map(
