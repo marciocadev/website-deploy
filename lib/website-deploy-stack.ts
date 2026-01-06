@@ -46,9 +46,9 @@ export class WebsiteDeployStack extends Stack {
         },
       ),
       managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
-        ManagedPolicy.fromAwsManagedPolicyName('AWSCloudFormationFullAccess'),
-        // ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'),
+        // ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
+        // ManagedPolicy.fromAwsManagedPolicyName('AWSCloudFormationFullAccess'),
+        ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'),
       ],
       maxSessionDuration: Duration.hours(1),
     });
