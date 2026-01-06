@@ -23,7 +23,8 @@ export class WebsiteDeployStack extends Stack {
     const repositoryConfig: { owner: string; repo: string; filter?: string }[] = [
       {
         owner: "marciocadev",
-        repo: "marciocadev-deploy"
+        repo: "marciocadev-deploy",
+        filter: "pull_request"
       },
       {
         owner: "marciocadev",
