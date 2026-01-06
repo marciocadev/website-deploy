@@ -16,7 +16,8 @@ export class WebsiteDeployStack extends Stack {
     const githubOidcProvider = new OpenIdConnectProvider(this, "GithubOidcProvider", {
       url: `https://${githubDomain}`,
       clientIds: ['sts.amazonaws.com'],
-    })
+    });
+
     const repositoryConfig: { owner: string; repo: string; filter?: string }[] = [
       {
         owner: "marciocadev",
@@ -45,10 +46,16 @@ export class WebsiteDeployStack extends Stack {
         },
       ),
       managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'),
+        ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
+        ManagedPolicy.fromAwsManagedPolicyName('AWSCloudFormationFullAccess'),
+        // ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'),
       ],
       maxSessionDuration: Duration.hours(1),
     });
+
+    new CfnOutput(this, "aaa", {
+      value: "aaa"
+    })
     // github deploy
 
     const bucket = new Bucket(this, "WebsiteBucket", {
