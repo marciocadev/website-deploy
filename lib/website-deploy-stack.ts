@@ -15,7 +15,7 @@ export class WebsiteDeployStack extends Stack {
     super(scope, id, props);
 
     // github deploy
-    const githubDomain = "github.com/marciocadev/website-deploy";
+    const githubDomain = 'token.actions.githubusercontent.com';
     const githubOidcProvider = new OpenIdConnectProvider(this, "GithubOidcProvider", {
       url: `https://${githubDomain}`,
       clientIds: ['sts.amazonaws.com'],
