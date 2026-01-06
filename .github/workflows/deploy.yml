@@ -16,7 +16,7 @@ jobs:
       contents: read
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v5.1.1
         with:
           role-to-assume: arn:aws:iam::549672552044:role/WebsiteDeployStack-GithubDeployRoleB0CF66A5-pDcKjZWQQs87
           aws-region: us-east-1
