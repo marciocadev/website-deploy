@@ -1,0 +1,37 @@
+name: Deploy on AWS
+
+on:
+  push:
+    branches:
+      -main
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    name: Deploy CDK Stacks
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::549672552044:role/WebsiteDeployStack-GithubDeployRoleB0CF66A5-zbKPqGXgs5e5
+          aws-region: us-east-1
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: CDK synth
+        run: npx cdk synth --output "cdk.out"
+
+      - name: Run deploy command
+        run: npx cdk deploy --all --app "cdk.out" --require-approval never
