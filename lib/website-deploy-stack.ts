@@ -15,7 +15,7 @@ export class WebsiteDeployStack extends Stack {
     super(scope, id, props);
 
     // github deploy
-    const githubDomain = "github.com/marciocadev/marciocadev-website";
+    const githubDomain = "github.com/marciocadev/website-deploy";
     const githubOidcProvider = new OpenIdConnectProvider(this, "GithubOidcProvider", {
       url: `https://${githubDomain}`,
       clientIds: ['sts.amazonaws.com'],
@@ -23,11 +23,11 @@ export class WebsiteDeployStack extends Stack {
     const repositoryConfig: { owner: string; repo: string; filter?: string }[] = [
       {
         owner: "marciocadev",
-        repo: "marciocadev-website"
+        repo: "marciocadev-deploy"
       },
       {
         owner: "marciocadev",
-        repo: "marciocadev-website",
+        repo: "marciocadev-deploy",
         filter: "main"
       },
     ]
