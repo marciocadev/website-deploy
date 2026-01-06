@@ -31,7 +31,7 @@ export class WebsiteDeployStack extends Stack {
     const iamRepoDeployAccess = repositoryConfig.map(
       (r) => `repo:${r.owner}/${r.repo}:${r.filter ?? '*'}`
     );
-    const role=new Role(this, "GithubDeployRole", {
+    new Role(this, "GithubDeployRole", {
       roleName: 'GitHubDeployRole',
       assumedBy: new OpenIdConnectPrincipal(
         githubOidcProvider,
@@ -49,9 +49,6 @@ export class WebsiteDeployStack extends Stack {
       ],
       maxSessionDuration: Duration.hours(1),
     });
-    new CfnOutput(this, "role", {
-      value: role.roleName
-    })
     // github deploy
 
     const bucket = new Bucket(this, "WebsiteBucket", {
