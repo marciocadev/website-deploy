@@ -52,10 +52,6 @@ export class WebsiteDeployStack extends Stack {
       ],
       maxSessionDuration: Duration.hours(1),
     });
-
-    new CfnOutput(this, "aaa", {
-      value: "aaa"
-    })
     // github deploy
 
     const bucket = new Bucket(this, "WebsiteBucket", {
