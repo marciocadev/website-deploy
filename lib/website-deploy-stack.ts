@@ -35,6 +35,7 @@ export class WebsiteDeployStack extends Stack {
       (r) => `repo:${r.owner}/${r.repo}:${r.filter ?? '*'}`
     );
     new Role(this, "GithubDeployRole", {
+      roleName: 'GitHubDeployRole',
       assumedBy: new WebIdentityPrincipal(
         githubOidcProvider.openIdConnectProviderArn,
         {
@@ -47,9 +48,9 @@ export class WebsiteDeployStack extends Stack {
         }
       ),
       managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
-        ManagedPolicy.fromAwsManagedPolicyName('AWSCloudFormationFullAccess'),
+        ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'),
       ],
+      maxSessionDuration: Duration.hours(1),
     });
     // github deploy
 
