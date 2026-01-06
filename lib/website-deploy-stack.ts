@@ -1,9 +1,6 @@
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { AccessLevel, Distribution, Function as CloudFrontFunction, FunctionCode, FunctionEventType, OriginAccessIdentity, ViewerProtocolPolicy, CachePolicy } from 'aws-cdk-lib/aws-cloudfront';
-import { S3BucketOrigin, S3StaticWebsiteOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { CanonicalUserPrincipal, ManagedPolicy, OpenIdConnectProvider, PolicyStatement, Role, WebIdentityPrincipal } from 'aws-cdk-lib/aws-iam';
-import { ARecord, CfnRecordSet, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
-import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { ManagedPolicy, OpenIdConnectPrincipal, OpenIdConnectProvider, Role } from 'aws-cdk-lib/aws-iam';
 import { BlockPublicAccess, Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib/core';
@@ -36,16 +33,16 @@ export class WebsiteDeployStack extends Stack {
     );
     new Role(this, "GithubDeployRole", {
       roleName: 'GitHubDeployRole',
-      assumedBy: new WebIdentityPrincipal(
-        githubOidcProvider.openIdConnectProviderArn,
+      assumedBy: new OpenIdConnectPrincipal(
+        githubOidcProvider,
         {
           StringEquals: {
             [`${githubDomain}:aud`]: 'sts.amazonaws.com',
           },
           StringLike: {
             [`${githubDomain}:sub`]: iamRepoDeployAccess
-          }
-        }
+          },
+        },
       ),
       managedPolicies: [
         ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'),
