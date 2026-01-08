@@ -1,6 +1,9 @@
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { AccessLevel, Distribution, Function as CloudFrontFunction, FunctionCode, FunctionEventType, OriginAccessIdentity, ViewerProtocolPolicy, CachePolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ManagedPolicy, OpenIdConnectPrincipal, OpenIdConnectProvider, Role } from 'aws-cdk-lib/aws-iam';
+import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BlockPublicAccess, Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { CfnOutput, Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib/core';
@@ -89,6 +92,12 @@ export class WebsiteDeployStack extends Stack {
       `),
     });
 
+    const certificateArn = "arn:aws:acm:us-east-1:549672552044:certificate/639a95ae-2ef7-4c14-a0f2-82d219636ab7";
+    const certificate = Certificate.fromCertificateArn(this, "DomainCertificate", certificateArn);
+
+    const domainName = "lazinessdevs.com";
+    const aliasDomainNames = ["www.lazinessdevs.com"];
+    
     const distribution = new Distribution(this, "Distribution", {
       defaultBehavior: {
         origin: S3BucketOrigin.withOriginAccessControl(bucket, {
@@ -112,6 +121,8 @@ export class WebsiteDeployStack extends Stack {
           ttl: Duration.seconds(0),
         },
       ],
+      certificate: certificate,
+      domainNames: [domainName, ...aliasDomainNames],
     });
 
     new BucketDeployment(this, "WebsiteBucketDeployment", {
@@ -129,14 +140,6 @@ export class WebsiteDeployStack extends Stack {
       ],
       memoryLimit: 1024,
     });
-
-
-    // const certificateArn = "arn:aws:acm:us-east-1:549672552044:certificate/350b4440-4bcd-4cb0-97c8-076dcf6a502b";
-    // const certificate=Certificate.fromCertificateArn(this, "DomainCertificate", certificateArn);
-
-    // // const recordName = "site";
-    // const domainName = "marciocadev.com";
-    // const aliasDomainNames = ["www.marciocadev.com"];
 
     // const distribution = new Distribution(this, "Distribution", {
     //   // certificate: certificate,
@@ -176,23 +179,23 @@ export class WebsiteDeployStack extends Stack {
     //   })
     // );
 
-    // const hostedZoneId = "Z014672621L0K2RACEWVV";
-    // const hostedZone = HostedZone.fromHostedZoneAttributes( this, 'HostedZone', {
-    //   hostedZoneId: hostedZoneId,
-    //   zoneName: domainName,
-    // });
+    const hostedZoneId = "Z069824114ZIVF0C518LF";
+    const hostedZone = HostedZone.fromHostedZoneAttributes( this, 'HostedZone', {
+      hostedZoneId: hostedZoneId,
+      zoneName: domainName,
+    });
 
-    // new ARecord( this, 'AliasRecord', {
-    //   zone: hostedZone,
-    //   target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-    // });
+    new ARecord( this, 'AliasRecord', {
+      zone: hostedZone,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+    });
 
-    // for (const alias of aliasDomainNames ?? [] ) {
-    //   new ARecord(this, `AliasRecord-${alias}`, {
-    //     zone: hostedZone,
-    //     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-    //     recordName: alias,
-    //   });
-    // };
+    for (const alias of aliasDomainNames ?? [] ) {
+      new ARecord(this, `AliasRecord-${alias}`, {
+        zone: hostedZone,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+        recordName: alias,
+      });
+    };
   }
 }
