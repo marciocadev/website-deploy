@@ -32,7 +32,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Synthesize CloudFormation template
-        run: npx cdk synth --output "cdk.out"
+        run: npx cdk synth --quiet --output "cdk.out"
 
       - name: Run deploy command
         run: npx cdk deploy --all --app "cdk.out" --require-approval never
