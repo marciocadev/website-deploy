@@ -1,4 +1,4 @@
-name: Deploy on AWS
+name: Deploy to AWS
 
 on:
   pull_request:
@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: CDK synth
+      - name: Synthesize CloudFormation template
         run: npx cdk synth --output "cdk.out"
 
       - name: Run deploy command
